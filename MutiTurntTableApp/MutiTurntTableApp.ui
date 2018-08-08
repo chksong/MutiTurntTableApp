@@ -1,25 +1,22 @@
-<UI version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>MutiTurntTableAppClass</class>
- <widget class="QDialog" name="MutiTurntTableAppClass" >
-  <property name="objectName" >
-   <string notr="true">MutiTurntTableAppClass</string>
-  </property>
-  <property name="geometry" >
+ <widget class="QDialog" name="MutiTurntTableAppClass">
+  <property name="geometry">
    <rect>
-	<x>0</x>
-	<y>0</y>
-	<width>600</width>
-	<height>400</height>
+    <x>0</x>
+    <y>0</y>
+    <width>886</width>
+    <height>613</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>MutiTurntTableApp</string>
   </property>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="6" margin="11"/>
  <resources>
-   <include location="MutiTurntTableApp.qrc"/>
+  <include location="MutiTurntTableApp.qrc"/>
  </resources>
  <connections/>
-</UI>
+</ui>

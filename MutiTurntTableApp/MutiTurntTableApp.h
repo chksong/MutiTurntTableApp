@@ -10,6 +10,15 @@ class MutiTurntTableApp : public QDialog
 public:
 	MutiTurntTableApp(QWidget *parent = Q_NULLPTR);
 
+public slots:
+	void devManager();
+	void viewLog();
+signals:
+
+
+private:
+	void setMyUI();
+
 private:
 	Ui::MutiTurntTableAppClass ui;
 };
