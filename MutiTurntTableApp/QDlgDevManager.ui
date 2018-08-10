@@ -1,23 +1,154 @@
-<UI version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>QDlgDevManager</class>
- <widget class="QDialog" name="QDlgDevManager" >
-  <property name="objectName" >
-   <string notr="true">QDlgDevManager</string>
-  </property>
-  <property name="geometry" >
+ <widget class="QDialog" name="QDlgDevManager">
+  <property name="geometry">
    <rect>
-	<x>0</x>
-	<y>0</y>
-	<width>400</width>
-	<height>300</height>
+    <x>0</x>
+    <y>0</y>
+    <width>592</width>
+    <height>360</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>QDlgDevManager</string>
   </property>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>571</width>
+     <height>341</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QTableView" name="tableView">
+        <property name="styleSheet">
+         <string notr="true">QHeaderView::section {
+background-color: rgb(200, 200, 255);
+}</string>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>151</number>
+        </attribute>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="PB_ADD">
+        <property name="text">
+         <string>添加</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_DEL">
+        <property name="text">
+         <string>删除</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_MODIF">
+        <property name="text">
+         <string>提交修改</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_CANCLE">
+        <property name="text">
+         <string>撤销修改</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
-</UI>
+ <connections>
+  <connection>
+   <sender>PB_MODIF</sender>
+   <signal>clicked()</signal>
+   <receiver>QDlgDevManager</receiver>
+   <slot>bt_save_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>547</x>
+     <y>214</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>570</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PB_CANCLE</sender>
+   <signal>clicked()</signal>
+   <receiver>QDlgDevManager</receiver>
+   <slot>bt_cancle_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>530</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>526</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PB_ADD</sender>
+   <signal>clicked()</signal>
+   <receiver>QDlgDevManager</receiver>
+   <slot>bt_add_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>560</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>521</x>
+     <y>24</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PB_DEL</sender>
+   <signal>clicked()</signal>
+   <receiver>QDlgDevManager</receiver>
+   <slot>bt_del_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>526</x>
+     <y>139</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>512</x>
+     <y>105</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>bt_save_click()</slot>
+  <slot>bt_cancle_click()</slot>
+  <slot>bt_add_click()</slot>
+  <slot>bt_del_click()</slot>
+ </slots>
+</ui>

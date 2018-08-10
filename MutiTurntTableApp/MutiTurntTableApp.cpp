@@ -11,6 +11,9 @@
 #include <QStatusBar>
 #include <QAction>
 
+#include "QSqlTableModel"
+#include "QTableView"
+
 
 #include "QDlgDevManager.h"
 
@@ -40,6 +43,8 @@ void MutiTurntTableApp::setMyUI()
 	for (auto row  :{0 ,1,2,3,4 }) {
 		for (auto col : { 0 ,1,2,3,4 ,5 }) {
 			QPushButton *tmpButton = new QPushButton(this);
+
+		//	tmpButton->su
 			tmpButton->setFixedSize(200, 200);
 			pLayout->addWidget(tmpButton, row, col);
 		}
@@ -107,6 +112,7 @@ void MutiTurntTableApp::setMyUI()
 // 查看日志
 void MutiTurntTableApp::viewLog()
 {
+
 
 
 }

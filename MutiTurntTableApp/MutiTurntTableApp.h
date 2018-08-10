@@ -13,6 +13,7 @@ public:
 public slots:
 	void devManager();
 	void viewLog();
+	
 signals:
 
 

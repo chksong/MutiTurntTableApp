@@ -33,13 +33,13 @@ bool openMySQLDB()
 	QString strName = QString::fromLocal8Bit("北京市公安局");
 
 	QSqlQuery query(db);
-	bool ret = query.exec("CREATE TABLE IF NOT EXISTS tb_devs3 (id int primary key AUTO_INCREMENT,name varchar(200),dev_ip varchar(50),camer_ip varchar(50) ) CHARSET = utf8");
+	bool ret = query.exec("CREATE TABLE IF NOT EXISTS tb_devs (id int primary key AUTO_INCREMENT,name varchar(200),dev_ip varchar(50),camer_ip varchar(50) ) CHARSET = utf8");
 	//auto ret2 = query.exec("insert into tb_devs3(name) values(strNameQSqlQuery query; 
-	QSqlQuery query2(db);
-	query2.prepare("INSERT INTO tb_devs3 (name, dev_ip) VALUES ( :name, :dev_ip)");
-	query2.bindValue(":name", QString::fromLocal8Bit("北京市"));
-	query2.bindValue(":dev_ip", "192.168.0.2");
-	auto ret2 = query2.exec();
+	//QSqlQuery query2(db);
+	//query2.prepare("INSERT INTO tb_devs3 (name, dev_ip) VALUES ( :name, :dev_ip)");
+	//query2.bindValue(":name", QString::fromLocal8Bit("北京市"));
+	//query2.bindValue(":dev_ip", "192.168.0.2");
+	//auto ret2 = query2.exec();
 
 
 	return true;
