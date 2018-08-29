@@ -3,6 +3,7 @@
 
 #include <QMessageBox>
 #include <QSqlError>
+#include "QFindDevs.h"
 
 //数据库密码 inhu!@#$%^001
 
@@ -30,13 +31,13 @@ QDlgDevManager::QDlgDevManager(QWidget *parent)
 
 
 	ui.tableView->setModel(model);
-	ui.tableView->setEditTriggers(QAbstractItemView::DoubleClicked); //使其不可编辑
+	ui.tableView->setEditTriggers(QAbstractItemView::NoEditTriggers); //使其不可编辑
 	ui.tableView->setColumnHidden(0, true);
 	ui.tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
 
 //如果你用在QTableView中使用右键菜单，需启用该属性        
-	ui.tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+//	ui.tableView->setContextMenuPolicy(Qt::CustomContextMenu);
 	
 }
 
@@ -73,11 +74,16 @@ void QDlgDevManager::bt_cancle_click()
 
 void QDlgDevManager::bt_add_click()
 {
+	/*
+	**  添加设备
 	int rowNum = model->rowCount(); //获得表的行数
 	model->insertRow(rowNum); //添加一行
 	QString strDev = QString::fromLocal8Bit("新设备 %1").arg(rowNum);
 	model->setData(model->index(rowNum, 1), strDev);
+	*/
 
+	QFindDevs *dlg = new QFindDevs(this);
+	dlg->show();
 }
 
 
