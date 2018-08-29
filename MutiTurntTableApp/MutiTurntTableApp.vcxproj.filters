@@ -39,6 +39,15 @@
     <ClCompile Include="QDlgDevManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QtViewItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TurnTableCommunication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QFindDevs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MutiTurntTableApp.h">
@@ -47,12 +56,24 @@
     <QtMoc Include="QDlgDevManager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="QtViewItem.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="QFindDevs.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TurnTableCommunication.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="MutiTurntTableApp.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="QDlgDevManager.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="QFindDevs.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
