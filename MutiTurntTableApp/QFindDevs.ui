@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QFindDevs</class>
+ <widget class="QDialog" name="QFindDevs">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>469</width>
+    <height>309</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QFindDevs</string>
+  </property>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>10</y>
+     <width>461</width>
+     <height>291</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="leftMargin">
+     <number>6</number>
+    </property>
+    <property name="topMargin">
+     <number>6</number>
+    </property>
+    <property name="rightMargin">
+     <number>6</number>
+    </property>
+    <property name="bottomMargin">
+     <number>6</number>
+    </property>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>串口地址</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_COM"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTableView" name="tableView">
+        <property name="styleSheet">
+         <string notr="true">QHeaderView::section {
+background-color: rgb(200, 200, 255);
+}</string>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>151</number>
+        </attribute>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="PB_Find">
+        <property name="text">
+         <string>查找</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_RENAME">
+        <property name="text">
+         <string>设定地址</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_ADD">
+        <property name="text">
+         <string>添加到管理系统</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>PB_Find</sender>
+   <signal>clicked()</signal>
+   <receiver>QFindDevs</receiver>
+   <slot>clickFindDev()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>419</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PB_RENAME</sender>
+   <signal>clicked()</signal>
+   <receiver>QFindDevs</receiver>
+   <slot>clickReName()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>375</x>
+     <y>151</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>372</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PB_ADD</sender>
+   <signal>clicked()</signal>
+   <receiver>QFindDevs</receiver>
+   <slot>clickAddDev()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>412</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>412</x>
+     <y>272</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>clickFindDev()</slot>
+  <slot>clickReName()</slot>
+  <slot>clickAddDev()</slot>
+ </slots>
+</ui>
