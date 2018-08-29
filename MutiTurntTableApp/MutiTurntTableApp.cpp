@@ -11,11 +11,14 @@
 #include <QStatusBar>
 #include <QAction>
 
-#include "QSqlTableModel"
-#include "QTableView"
-
+#include <QSqlTableModel>
+#include <QTableView>
+#include <QDebug>
 
 #include "QDlgDevManager.h"
+#include "QtViewItem.h"
+#include "QFindDevs.h"
+
 
 MutiTurntTableApp::MutiTurntTableApp(QWidget *parent)
 	: QDialog(parent)
@@ -37,12 +40,15 @@ MutiTurntTableApp::MutiTurntTableApp(QWidget *parent)
 // 设置本地布局
 void MutiTurntTableApp::setMyUI()
 {
+	
 
 	// 设置网格空间
 	QGridLayout *pLayout = new QGridLayout();
 	for (auto row  :{0 ,1,2,3,4 }) {
 		for (auto col : { 0 ,1,2,3,4 ,5 }) {
-			QPushButton *tmpButton = new QPushButton(this);
+			QPushButton *tmpButton = new QtViewItem(this);
+
+			
 
 		//	tmpButton->su
 			tmpButton->setFixedSize(200, 200);
@@ -78,9 +84,29 @@ void MutiTurntTableApp::setMyUI()
 	//QMenu* devsMenu = pMenuBar->addMenu(QString::fromLocal8Bit("设备管理"));
 //	QAction* openAction = devsMenu->addAction("&Open", this, SLOT(slotOpen()), QKeySequence::Open);
 
+	QMenu* menuSetting= pMenuBar->addMenu(QString::fromLocal8Bit("系统配置"));
+	//设置卫星的位置
+	QMenu* menuSatellite = menuSetting->addMenu(QString::fromLocal8Bit("卫星位置"));
+
+	QAction *manualAction = new QAction(QString::fromLocal8Bit("手动输入"), this);
+	menuSatellite->addAction(manualAction);
+
+	QAction *netAction = new QAction(QString::fromLocal8Bit("网络获取"), this);
+	menuSatellite->addAction(netAction);
+
+	QAction *formFileAction = new QAction(QString::fromLocal8Bit("文件获取"), this);
+	menuSatellite->addAction(formFileAction);
+
+
 	QAction *devAction = new QAction(QString::fromLocal8Bit("转台管理"), this);
-	pMenuBar->addAction(devAction);
+	menuSetting->addAction(devAction);
 	connect(devAction, &QAction::triggered, this, &MutiTurntTableApp::devManager);
+	
+	//QAction *findAction = new QAction(QString::fromLocal8Bit("查看串口设备"), this);
+	//menuSetting->addAction(findAction);
+	//connect(findAction, &QAction::triggered, this, &MutiTurntTableApp::findDev);
+
+
 
 	QAction *logAction = new QAction(QString::fromLocal8Bit("日志查看"), this);
 	pMenuBar->addAction(logAction);
@@ -124,3 +150,51 @@ void MutiTurntTableApp::devManager()
 	QDlgDevManager *dlgDev = new QDlgDevManager(this);
 	dlgDev->show();
 }
+
+
+//查找 链接的设备
+void MutiTurntTableApp::findDev()
+{
+	QFindDevs *dlg = new QFindDevs(this);
+	dlg->show();
+}
+
+
+//// 手动设定卫星的位置
+void MutiTurntTableApp::manSatellitePOS()
+{
+
+}
+
+// 从网上获取卫星位置
+void MutiTurntTableApp::GetSatellitePOSFromNet()
+{
+
+}
+
+// 从文件获取的位置
+void MutiTurntTableApp::GetSatellitePOSFromFile()
+{
+
+
+}
+
+
+
+
+//
+void MutiTurntTableApp::actionOneSlot()
+{
+	qDebug() << "actionOneSlot";
+}
+
+void MutiTurntTableApp::actionTwoSlot()
+{
+	qDebug() << "actionTwoSlot";
+}
+
+void MutiTurntTableApp::actionThreeSlot()
+{
+	qDebug() << "actionThreeSlot";
+}
+

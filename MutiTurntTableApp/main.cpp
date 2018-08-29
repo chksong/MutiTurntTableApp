@@ -9,6 +9,9 @@
 
 #include <string>
 
+
+#include "TurnTableCommunication.h"
+
 bool openMySQLDB()
 {
 	// 输出可用数据库引擎
@@ -30,7 +33,7 @@ bool openMySQLDB()
 	else 
 		qDebug() << "connect to db_turntable sucessful";
 
-	QString strName = QString::fromLocal8Bit("北京市公安局");
+	//QString strName = QString::fromLocal8Bit("北京市公安局");
 
 	QSqlQuery query(db);
 	bool ret = query.exec("CREATE TABLE IF NOT EXISTS tb_devs (id int primary key AUTO_INCREMENT,name varchar(200),dev_ip varchar(50),camer_ip varchar(50) ) CHARSET = utf8");
@@ -52,6 +55,13 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	openMySQLDB();
+
+
+	CTurnTableCommunication *test = new CTurnTableCommunication(nullptr);
+	test->test();
+	
+//	qDebug() << hex << 12;
+
 
 	MutiTurntTableApp w;
 
