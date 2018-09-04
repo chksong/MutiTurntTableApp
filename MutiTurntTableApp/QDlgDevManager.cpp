@@ -24,8 +24,8 @@ QDlgDevManager::QDlgDevManager(QWidget *parent)
 	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
 
-	model->setHeaderData(1, Qt::Horizontal, QString::fromLocal8Bit("名称"));
-	model->setHeaderData(2, Qt::Horizontal, QString::fromLocal8Bit("设备IP"));
+	model->setHeaderData(1, Qt::Horizontal, QString::fromLocal8Bit("设备地址"));
+	model->setHeaderData(2, Qt::Horizontal, QString::fromLocal8Bit("串口号"));
 	model->setHeaderData(3, Qt::Horizontal, QString::fromLocal8Bit("摄像机IP"));
 	model->select(); //选取整个表的所有行
 
@@ -43,8 +43,7 @@ QDlgDevManager::QDlgDevManager(QWidget *parent)
 
 QDlgDevManager::~QDlgDevManager()
 {
-
-
+	this->disconnect();
 }
 
 
@@ -83,6 +82,7 @@ void QDlgDevManager::bt_add_click()
 	*/
 
 	QFindDevs *dlg = new QFindDevs(this);
+	connect(dlg, &QFindDevs::signalAddDev, this, &QDlgDevManager::AddDevBySignal);
 	dlg->show();
 }
 
@@ -92,6 +92,11 @@ void QDlgDevManager::bt_del_click()
 	//获取选中的行
 	int curRow = ui.tableView->currentIndex().row();
 
+	 
+	QString devAddress = model->data( model->index(curRow, 1)).toString();
+	QString devCOM = model->data(model->index(curRow, 2)).toString();
+
+
 	//删除该行
 	model->removeRow(curRow);
 	int ok = QMessageBox::warning(this, QString::fromLocal8Bit("删除当前行!"), QString::fromLocal8Bit("你确定"
@@ -100,10 +105,12 @@ void QDlgDevManager::bt_del_click()
 	if (ok == QMessageBox::No)
 	{
 		model->revertAll(); //如果不删除，则撤销
+		return;
 	}
 	else 
 		model->submitAll(); //否则提交，在数据库中删除该行  
 
+	emit sigAddDevToUI(std::make_tuple(devAddress, devCOM, QString("")));
 }
 
 
@@ -118,4 +125,35 @@ void QDlgDevManager::bt_edit_click()
 
 
 
+}
+
+void QDlgDevManager::AddDevBySignal(std::tuple<QString, QString, QString> & msgData)
+{
+	QString strDev = std::get<0>(msgData);
+	QString strCOM = std::get<1>(msgData);
+	QString CarmIP = std::get<2>(msgData);
+
+	QSqlTableModel *modelQuery = new QSqlTableModel(this);
+	modelQuery->setTable("tb_devs");
+	auto strSql = QString("name = '%1' and dev_ip = '%2'").arg(strDev).arg(strCOM);
+	//auto strSql = QString("name = '%1'").arg(strDev)  ;
+	modelQuery->setFilter(strSql);
+	modelQuery->select();
+	auto curRows = modelQuery->rowCount();
+	if (curRows) {
+		QMessageBox::warning(this, QString::fromLocal8Bit("警告"), QString::fromLocal8Bit(
+			"重复添加"),
+			QMessageBox::Ok);
+		return;
+	}
+
+	//添加设备
+	int rowNum = model->rowCount(); //获得表的行数
+	model->insertRow(rowNum); //添加一行
+	model->setData(model->index(rowNum, 1), strDev);
+	model->setData(model->index(rowNum, 2), strCOM);
+	model->setData(model->index(rowNum, 3), CarmIP);
+	model->submitAll();
+
+	emit sigAddDevToUI(std::make_tuple(strDev,  strCOM , CarmIP));
 }

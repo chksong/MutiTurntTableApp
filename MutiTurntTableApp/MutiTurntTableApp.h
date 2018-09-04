@@ -3,6 +3,10 @@
 #include <QtWidgets/QDialog>
 #include "ui_MutiTurntTableApp.h"
 
+#include <vector>
+#include <tuple>
+#include <memory>
+
 class MutiTurntTableApp : public QDialog
 {
 	Q_OBJECT
@@ -27,16 +31,22 @@ protected slots :
 
 
 protected slots:
-	void actionOneSlot();
-	void actionTwoSlot();
-	void actionThreeSlot();
+
+
+	void addDevBySignal(std::tuple<QString, QString, QString>& msgData);
+	void delDevBySignal(std::tuple<QString, QString, QString>& msgData);
 	
 signals:
 
 
 private:
 	void setMyUI();
+	void LoadDataFromDB();
 
 private:
 	Ui::MutiTurntTableAppClass ui;
+
+
+	using SmartQStringPtr = std::shared_ptr<QString>;
+	std::vector <std::tuple<SmartQStringPtr, SmartQStringPtr, SmartQStringPtr>> m_arrayDev;
 };

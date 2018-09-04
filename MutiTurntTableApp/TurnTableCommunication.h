@@ -88,8 +88,21 @@ public:
 	// 重新设置设备的地址
 	std::tuple<bool, QString> ResetDevAddressSync(QString& strCOM, std::array<char, 4>& sourceAddress);
 
-	void test();
 
+
+	// 这是日镜电机的运动方式 
+	// direcet > 0 为 x 方向；  小于零为Y的方向。
+	// xyModel 大于0 为向上， 或顺时针 ， 小于零位向下或逆时针， 0 位停止
+	std::tuple<bool, QString> setRunModle_xy (int direction, int xyModel);
+
+ 
+
+	// 设置日镜电机的运动角度
+	std::tuple<bool, QString> setRunDegree_xy(double xDegree, double yDegree);
+
+
+
+	void test();
 protected:
 	bool openSerialPort(QString &strCOM);
 

@@ -17,6 +17,9 @@ public:
 	QFindDevs(QWidget *parent = Q_NULLPTR);
 	~QFindDevs();
 
+signals:
+	void signalAddDev(std::tuple<QString, QString, QString>& msgData);
+
 public slots:
 	void clickFindDev();
 	void clickReName();

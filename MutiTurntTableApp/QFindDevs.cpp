@@ -41,7 +41,7 @@ QFindDevs::QFindDevs(QWidget *parent)
 
 QFindDevs::~QFindDevs()
 {
-	
+	this->disconnect();
 	 
 }
 
@@ -96,15 +96,6 @@ void QFindDevs::clickFindDev()
 }
 
 
-//讲串口设备，添加到系统中的数据库中。。
-//可能需要什么办法，     通知后面的窗口。
-void QFindDevs::clickAddDev()
-{
-
-}
-
-
-
 
 // 重命令的设备的地址
 void QFindDevs::clickReName()
@@ -152,8 +143,6 @@ void QFindDevs::clickReName()
 	
 
 	// 设定设定地址
-
-
 	// 1. 输入的串口号为空
 	if (ui.lineEdit_COM->text().length() == 0)
 	{
@@ -175,4 +164,54 @@ void QFindDevs::clickReName()
 	else { // 设置成功
 		devAddress = expectAddress;
 	}
+}
+
+
+//讲串口设备，添加到系统中的数据库中。。
+//可能需要什么办法，     通知后面的窗口。
+void QFindDevs::clickAddDev()
+{
+	if (model->rowCount() < 1) {
+		return;
+	}
+
+	int row = ui.tableView->currentIndex().row();
+	//没有选择不能编辑
+	if (row < 0) {
+		if (model->rowCount()) {
+			row = 0;
+		}
+		else {
+			return;
+		}
+	}
+
+	// 分析地址是否正确
+	QModelIndex index = model->index(row, 0);
+	QString  strAddress = model->data(index).toString();
+	QStringList addreslist = model->data(index).toString().split(" ");
+	if (addreslist.count() != 4)
+	{
+		int ok = QMessageBox::critical(this, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("设定的地址不正确"),
+			QMessageBox::Yes);
+		return;
+	}
+	std::array<char, 4> expectAddress;
+	for (int addrSize = 0; addrSize < addreslist.size(); addrSize++)
+	{
+		bool retOK;
+		unsigned int value = addreslist[addrSize].toInt(&retOK, 16);
+		if (!retOK || value > 0xFF)
+		{
+			int ok = QMessageBox::critical(this, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("设定的地址不正确"),
+				QMessageBox::Yes);
+			return;
+		}
+		expectAddress[addrSize] = value;
+	}
+
+
+	emit signalAddDev(std::make_tuple(strAddress, ui.lineEdit_COM->text(), QString("")));
+
+	//close();
 }

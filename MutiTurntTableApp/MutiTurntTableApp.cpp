@@ -14,6 +14,7 @@
 #include <QSqlTableModel>
 #include <QTableView>
 #include <QDebug>
+#include <QSqlRecord>
 
 #include "QDlgDevManager.h"
 #include "QtViewItem.h"
@@ -29,10 +30,33 @@ MutiTurntTableApp::MutiTurntTableApp(QWidget *parent)
 	flags |= Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint;;
 	setWindowFlags(flags);
 
-	setMyUI();  //自己设置布局
+	
 	setWindowTitle(QStringLiteral("转台管理"));
 	
 	//showFullScreen();
+
+	LoadDataFromDB();
+	setMyUI();  //自己设置布局
+}
+
+// 从数据库加载
+void MutiTurntTableApp::LoadDataFromDB()
+{
+	m_arrayDev.clear();
+
+	QSqlTableModel *modelQuery = new QSqlTableModel(this);
+	modelQuery->setTable("tb_devs");
+	modelQuery->select();
+	for (int i = 0; i < modelQuery->rowCount(); ++i) {
+		QSqlRecord record = modelQuery->record(i);
+		QString name = record.value("name").toString();
+		
+		SmartQStringPtr ptrDev = std::make_shared<QString>(record.value("name").toString());
+		SmartQStringPtr ptrCOM = std::make_shared<QString>(record.value("dev_ip").toString());
+		SmartQStringPtr ptrCamIP = std::make_shared<QString>(record.value("camer_ip").toString());
+
+		m_arrayDev.push_back(std::make_tuple(ptrDev, ptrCOM, ptrCamIP));
+	}
 }
 
 
@@ -40,19 +64,28 @@ MutiTurntTableApp::MutiTurntTableApp(QWidget *parent)
 // 设置本地布局
 void MutiTurntTableApp::setMyUI()
 {
-	
-
+	int ColNumSize = 6;
+	int arraySize = m_arrayDev.size();
 	// 设置网格空间
 	QGridLayout *pLayout = new QGridLayout();
-	for (auto row  :{0 ,1,2,3,4 }) {
-		for (auto col : { 0 ,1,2,3,4 ,5 }) {
-			QPushButton *tmpButton = new QtViewItem(this);
+	//for (auto row  :{0 ,1,2,3,4 }) {
+	//	for (auto col : { 0 ,1,2,3,4 ,5 }) {
 
+
+	for (int row = 0; row <= arraySize / ColNumSize; ++row) {
+		for (int col = 0 ; col < arraySize % ColNumSize; ++ col ) {
+			auto index = row * ColNumSize + col;
+
+			SmartQStringPtr ptrDev = std::get<0>(m_arrayDev[index]);
+			SmartQStringPtr ptrCOM = std::get<1>(m_arrayDev[index]);
+			SmartQStringPtr ptrCamIP = std::get<2>(m_arrayDev[index]);
+
+			QtViewItem *curItem = new QtViewItem(this);
+			curItem->setCfg(ptrDev, ptrCOM, ptrCamIP);
+			curItem->start();
 			
-
-		//	tmpButton->su
-			tmpButton->setFixedSize(200, 200);
-			pLayout->addWidget(tmpButton, row, col);
+			curItem->setFixedSize(200, 200);
+			pLayout->addWidget(curItem, row, col);
 		}
 	}
 
@@ -102,9 +135,7 @@ void MutiTurntTableApp::setMyUI()
 	menuSetting->addAction(devAction);
 	connect(devAction, &QAction::triggered, this, &MutiTurntTableApp::devManager);
 	
-	//QAction *findAction = new QAction(QString::fromLocal8Bit("查看串口设备"), this);
-	//menuSetting->addAction(findAction);
-	//connect(findAction, &QAction::triggered, this, &MutiTurntTableApp::findDev);
+	
 
 
 
@@ -144,12 +175,6 @@ void MutiTurntTableApp::viewLog()
 }
 
 
-// 转台设备管理
-void MutiTurntTableApp::devManager()
-{
-	QDlgDevManager *dlgDev = new QDlgDevManager(this);
-	dlgDev->show();
-}
 
 
 //查找 链接的设备
@@ -179,22 +204,39 @@ void MutiTurntTableApp::GetSatellitePOSFromFile()
 
 }
 
+// 转台设备管理
+void MutiTurntTableApp::devManager()
+{
+	QDlgDevManager *dlgDev = new QDlgDevManager(this);
+	connect(dlgDev, &QDlgDevManager::sigAddDevToUI, this, &MutiTurntTableApp::addDevBySignal);
+	connect(dlgDev, &QDlgDevManager::sigDelDevToUI, this, &MutiTurntTableApp::delDevBySignal);
+	dlgDev->show();
+}
 
+
+
+
+// 收到来自 设备管理窗口 添加设备的信息
+void MutiTurntTableApp::addDevBySignal(std::tuple<QString, QString, QString>& msgData)
+{
+	//
+	//  ............
+	// 
+
+
+}
+
+// // 收到来自 设备管理窗口 删除设备的信息
+void MutiTurntTableApp::delDevBySignal(std::tuple<QString, QString, QString>& msgData)
+{
+	//
+	//  ............
+
+
+
+
+}
 
 
 //
-void MutiTurntTableApp::actionOneSlot()
-{
-	qDebug() << "actionOneSlot";
-}
-
-void MutiTurntTableApp::actionTwoSlot()
-{
-	qDebug() << "actionTwoSlot";
-}
-
-void MutiTurntTableApp::actionThreeSlot()
-{
-	qDebug() << "actionThreeSlot";
-}
 

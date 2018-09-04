@@ -132,13 +132,12 @@ bool CTurnTableCommunication::setAndOpenCOM(QString &strCOM)
 
 	if (!m_Serial->open(QIODevice::ReadWrite)) {
 		QString strErr = QString::fromLocal8Bit("Failed to open port %1, error: %2").arg(m_strCOM).arg(m_Serial->errorString());
-		return 1;
+		return false;
 	}
-
+	else {
+		return false;
+	}
 	
-
-
-	return false;
 }
 
 bool CTurnTableCommunication::openSerialPort(QString &strCOM)
@@ -170,7 +169,7 @@ bool CTurnTableCommunication::openSerialPort(QString &strCOM)
 		return true;
 	}
 	else {
-		false;
+		return  false;
 	}
 }
   
@@ -256,7 +255,6 @@ std::tuple<bool, QString> CTurnTableCommunication::ResetDevAddressSync(QString& 
 std::tuple<bool, QString> CTurnTableCommunication::GetDevAddressSync(QString& strCOM, std::array<char, 4>& ackAddress, char& version)
 {
 
-	
 	//如果打开串口失败，则返回
 	if (!openSerialPort(strCOM)) {
 		QString strErr = QString::fromLocal8Bit("打开串口失败 %1, error: %2").arg(m_strCOM).arg(m_Serial->errorString());
@@ -321,6 +319,217 @@ std::tuple<bool, QString> CTurnTableCommunication::GetDevAddressSync(QString& st
 	version = ackData.date[0];
 
 	return std::make_tuple(true, QString(""));
+}
+
+
+// 设置电机的运动方式
+std::tuple<bool, QString> CTurnTableCommunication::setRunModle_xy(int direction, int xyModel)
+{
+	char fun_cmd;
+	if (direction > 0 )  // X方向
+	{  
+		if (xyModel > 0)  {  // 顺时针
+			fun_cmd = 0x31;
+		}
+		else if (xyModel < 0 )  // 逆时针
+		{
+			fun_cmd = 0x32;
+		}
+		else {
+			fun_cmd = 0x30;   // 停止
+		}
+	}
+	else if (direction  < 0 ) // Y方向
+	{
+		if (xyModel > 0) {    //向上
+			fun_cmd = 0x42;
+		}
+		else if (xyModel < 0)  //向下
+		{
+			fun_cmd = 0x41;   
+		}
+		else {               // 停止
+			fun_cmd = 0x40;   
+		}
+	}
+
+	if (! m_Serial->isOpen())
+	{
+		if (!openSerialPort(m_strCOM)) {
+			QString strErr = QString::fromLocal8Bit("打开串口失败 %1, error: %2").arg(m_strCOM).arg(m_Serial->errorString());
+			return std::make_tuple(false, strErr);
+		}
+	}
+	
+
+	//组装查询地址的协议，发送
+	SendDataStruct  sendData;
+	SetZeroMem(sendData);
+	sendData.address[0] = m_address[0];
+	sendData.address[1] = m_address[1];
+	sendData.address[2] = m_address[2];
+	sendData.address[3] = m_address[3];
+	sendData.len = 0x07;
+	sendData.funKey = static_cast<char>(fun_cmd);
+	auto crc = Get_CRC16(reinterpret_cast<unsigned char*>(&sendData), sizeof(sendData) - 2);
+	sendData.crcLow = std::get<0>(crc);
+	sendData.crcHight = std::get<1>(crc);
+
+	// 发送数据
+	const qint64 bytesWritten = m_Serial->write(reinterpret_cast<char*>(&sendData), sizeof(sendData));
+	if (bytesWritten == -1) {
+		QString strErr = QString::fromLocal8Bit("Failed to write the data to port %1, error: %2")
+			.arg(m_strCOM).arg(m_Serial->errorString());
+		return std::make_tuple(false, strErr);
+	}
+	else if (bytesWritten != sizeof(sendData)) {
+		QString strErr = QString::fromLocal8Bit("Failed to write all the data to port %1, error: %2")
+			.arg(m_strCOM).arg(m_Serial->errorString());
+		return std::make_tuple(false, strErr);
+	}
+	else if (!m_Serial->waitForBytesWritten(5000)) {
+		QString strErr = QString::fromLocal8Bit("Operation timed out or an error "
+			"occurred for port %1, error: %2")
+			.arg(m_strCOM).arg(m_Serial->errorString());
+		return std::make_tuple(false, strErr);
+	}
+
+
+
+	// 读取数据
+	QByteArray readData;
+	if (m_Serial->waitForReadyRead(5000)) {
+		readData.append(m_Serial->readAll());
+	}
+
+	//收到数据长度不对 跳出
+	if (readData.length() != sizeof(AckDate10Struct)) {
+		return std::make_tuple(false, QString::fromLocal8Bit("收到长度不对"));
+	}
+
+	AckDate10Struct  ackData;
+	SetZeroMem(ackData);
+	std::memcpy((unsigned char*)&ackData, readData.data(), sizeof(AckDate10Struct));
+	if (!Check_CRC16((unsigned char*)&ackData, sizeof(ackData) - 2))
+	{
+		return std::make_tuple(false, QString::fromLocal8Bit("CRC校验有问题"));
+	}
+
+	//根据协议 检验数据的对错
+	if (ackData.funKey != fun_cmd 
+		|| ackData.date[2] != 0x55)
+	{
+		return std::make_tuple(false, QString::fromLocal8Bit("收到数据内部错误"));
+	}
+
+	return std::make_tuple(true, QString(""));
+}
+
+
+
+// 设置日镜电机的运动角度
+std::tuple<bool, QString> CTurnTableCommunication::setRunDegree_xy(double xDegree, double yDegree)
+{
+	if (!m_Serial->isOpen())
+	{
+		if (!openSerialPort(m_strCOM)) {
+			QString strErr = QString::fromLocal8Bit("打开串口失败 %1, error: %2").arg(m_strCOM).arg(m_Serial->errorString());
+			return std::make_tuple(false, strErr);
+		}
+	}
+
+
+	//组装查询地址的协议，发送
+	SendDataStruct  sendData;
+	SetZeroMem(sendData);
+	sendData.address[0] = m_address[0];
+	sendData.address[1] = m_address[1];
+	sendData.address[2] = m_address[2];
+	sendData.address[3] = m_address[3];
+	sendData.funKey = static_cast<char>(0x08);
+	sendData.len = 0x07;
+	sendData.data[0] = 0x00;
+
+	short xInt = (int)xDegree; // X度数的整数部分
+	char xFloat = char (((short)xDegree - xInt) * 100);
+	sendData.data[1] = (xInt >> 8) & 0x00FF;
+	sendData.data[2] = xInt & 0x00FF;
+	sendData.data[3] = xFloat;
+
+	short yInt = (int)yDegree; // Y度数的整数部分
+	char yFloat = char(((short)yDegree - yInt) * 100);
+	sendData.data[4] = (yInt >> 8) & 0x00FF;
+	sendData.data[5] = yInt & 0x00FF;
+	sendData.data[6] = yFloat;
+
+	auto crc = Get_CRC16(reinterpret_cast<unsigned char*>(&sendData), sizeof(sendData) - 2);
+	sendData.crcLow = std::get<0>(crc);
+	sendData.crcHight = std::get<1>(crc);
+
+
+	// 发送数据
+	const qint64 bytesWritten = m_Serial->write(reinterpret_cast<char*>(&sendData), sizeof(sendData));
+	if (bytesWritten == -1) {
+		QString strErr = QString::fromLocal8Bit("Failed to write the data to port %1, error: %2")
+			.arg(m_strCOM).arg(m_Serial->errorString());
+		return std::make_tuple(false, strErr);
+	}
+	else if (bytesWritten != sizeof(sendData)) {
+		QString strErr = QString::fromLocal8Bit("Failed to write all the data to port %1, error: %2")
+			.arg(m_strCOM).arg(m_Serial->errorString());
+		return std::make_tuple(false, strErr);
+	}
+	else if (!m_Serial->waitForBytesWritten(5000)) {
+		QString strErr = QString::fromLocal8Bit("Operation timed out or an error "
+			"occurred for port %1, error: %2")
+			.arg(m_strCOM).arg(m_Serial->errorString());
+		return std::make_tuple(false, strErr);
+	}
+
+
+
+	// 读取数据
+	QByteArray readData;
+	if (m_Serial->waitForReadyRead(5000)) {
+		readData.append(m_Serial->readAll());
+	}
+
+	//收到数据长度不对 跳出
+	if ( readData.length() != sizeof(AckDate10Struct) && 
+		readData.length() != 2 * sizeof(AckDate10Struct)) {
+		return std::make_tuple(false, QString::fromLocal8Bit("收到长度不对"));
+	}
+
+	//校验数据包
+	AckDate11Struct  ackData;
+	SetZeroMem(ackData);
+	std::memcpy((unsigned char*)&ackData, readData.data(), sizeof(AckDate11Struct));
+	if (!Check_CRC16((unsigned char*)&ackData, sizeof(ackData) - 2))
+	{
+		return std::make_tuple(false, QString::fromLocal8Bit("CRC校验有问题"));
+	}
+	
+
+	//仔细分析包数据的内容
+
+
+
+	// 如果收到是2个包
+	if (readData.length() == 2 * sizeof(AckDate11Struct))
+	{
+		//校验数据包
+		AckDate11Struct  ackData2;
+		SetZeroMem(ackData2);
+		std::memcpy((unsigned char*)&ackData2, readData.data() + sizeof(AckDate11Struct), sizeof(AckDate11Struct));
+		if (!Check_CRC16((unsigned char*)&ackData2, sizeof(ackData2) - 2))
+		{
+			return std::make_tuple(false, QString::fromLocal8Bit("CRC校验有问题"));
+		}
+
+		//仔细分析包数据的内容 
+
+	}
+
 }
 
 
