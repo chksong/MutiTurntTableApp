@@ -95,17 +95,11 @@ void QtViewItem::menuRunModel()
 	{
 		// 调用串口发送 运动方式
 		auto test = 1;
-
 		m_devCommunication->setRunModle_xy(m_X_Model, m_Y_Model);
-
 		return;
 	}
 	else {
 		auto test3 = 2;
-
-
-
-
 		return; 
 	}
 
@@ -123,10 +117,7 @@ void QtViewItem::menuRunDegree()
 	{
 		// 调用串口发送 运动方式
 		auto test = 1;
-
 	//	m_devCommunication->setRunDegree_xy();
-
-
 		return;
 	}
 	else {
